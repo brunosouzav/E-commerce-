@@ -17,7 +17,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -42,12 +41,10 @@ public class User implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Nome não pode ser vazio")
     private String name;
 
-    @Email(message = "Email inválido")
     @NotEmpty(message = "Email não pode ser vazio")
-    private String email;
+    private String login;
 
     @Size(min = 6, message = "A senha deve ter pelo menos 6 caracteres")
     private String password;
@@ -57,7 +54,13 @@ public class User implements UserDetails{
 
     @Enumerated(EnumType.STRING) 
     private UserRole role;
-
+    
+    public User (String login, String password, UserRole role) {
+    	this.login = login;
+    	this.password = password;
+    	this.role = role;
+    }
+    
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		if (this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
@@ -68,6 +71,6 @@ public class User implements UserDetails{
 	@Override
 	public String getUsername() {
 		
-		return email;
+		return login;
 	} 
 }
